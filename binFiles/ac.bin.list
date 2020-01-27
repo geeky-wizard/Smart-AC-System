@@ -1,0 +1,428 @@
+EMU8086 GENERATED LISTING. MACHINE CODE <- SOURCE.
+ 
+ac.bin -- emu8086 assembler version: 4.08  
+ 
+[ 4/25/2019  --  3:28:37 AM ] 
+ 
+===================================================================================================
+[LINE]     LOC: MACHINE CODE                          SOURCE
+===================================================================================================
+ 
+[   1]        :                                       #make_bin#
+[   2]        :                                       
+[   3]        :                                       ; BIN is plain binary format similar to .com format, but not limited to 1 segment;
+[   4]        :                                       ; All values between # are directives, these values are saved into a separate .binf file.
+[   5]        :                                       ; Before loading .bin file emulator reads .binf file with the same file name.
+[   6]        :                                       
+[   7]        :                                       ; All directives are optional, if you don't need them, delete them.
+[   8]        :                                       
+[   9]        :                                       ; set loading address, .bin file will be loaded to this address:
+[  10]        :                                       #LOAD_SEGMENT=0500h#
+[  11]        :                                       #LOAD_OFFSET=0000h#
+[  12]        :                                       
+[  13]        :                                       ; set entry point:
+[  14]        :                                       #CS=0500h#	; same as loading segment
+[  15]        :                                       #IP=0000h#	; same as loading offset
+[  16]        :                                       
+[  17]        :                                       ; set segment registers
+[  18]        :                                       #DS=0500h#	; same as loading segment
+[  19]        :                                       #ES=0500h#	; same as loading segment
+[  20]        :                                       
+[  21]        :                                       ; set stack
+[  22]        :                                       #SS=0500h#	; same as loading segment
+[  23]        :                                       #SP=FFFEh#	; set to top of loading segment
+[  24]        :                                       
+[  25]        :                                       ; set general registers (optional)
+[  26]        :                                       #AX=0000h#
+[  27]        :                                       #BX=0000h#
+[  28]        :                                       #CX=0000h#
+[  29]        :                                       #DX=0000h#
+[  30]        :                                       #SI=0000h#
+[  31]        :                                       #DI=0000h#
+[  32]        :                                       #BP=0000h#
+[  33]        :                                       
+[  34]        :                                       .MODEL tiny
+[  35]    0100: EB 03                                 .DATA
+[  36]        :                                       
+[  37]        :                                       ;TIMER-1 ADDRESS MAIN TIMER
+[  38]        :                                       CT0 EQU 30H
+[  39]        :                                       CT1 EQU 32H
+[  40]        :                                       CT2 EQU 34H
+[  41]        :                                       CRG EQU 36H
+[  42]        :                                       
+[  43]        :                                       ; 8255-1 ADDRESS
+[  44]        :                                       PA1 EQU 10H
+[  45]        :                                       PB1 EQU 12H
+[  46]        :                                       PC1 EQU 14H
+[  47]        :                                       CA1 EQU 16H
+[  48]        :                                       
+[  49]        :                                       ; 8255-2 ADDRESS
+[  50]        :                                       PA2 EQU 20H
+[  51]        :                                       PB2 EQU 22H
+[  52]        :                                       PC2 EQU 24H
+[  53]        :                                       CA2 EQU 26H
+[  54]        :                                       
+[  55]        :                                       
+[  56]        :                                       ; USER DATA
+[  57]    0102: 19                                    UTMP DB 25
+[  58]    0103: 0F                                    TVAL DB 15
+[  59]    0104: 00                                    OPV  DB 00
+[  60]        :                                       
+[  61]    0105:                                       .CODE
+[  62]    0105:                                       .STARTUP
+[  63]        :                                       
+[  64]        :                                       	;INITIALISE 8255-1
+[  65]    0105: B0 89                                 	MOV AL, 10001001B
+[  66]    0107: E6 16                                 	OUT CA1, AL
+[  67]        :                                       
+[  68]        :                                       	;INITIALISE 8255-2
+[  69]    0109: B0 90                                 	MOV AL, 90h
+[  70]    010B: E6 26                                 	OUT CA2, AL
+[  71]        :                                       
+[  72]    010D: E8 25 01                              	CALL LCD_INIT; INITIALIZES THE LCD
+[  73]        :                                       
+[  74]        :                                       		; MAIN TIMER
+[  75]    0110: B0 36                                 	MOV AL, 00110110B
+[  76]    0112: E6 36                                 	OUT CRG, AL
+[  77]        :                                       
+[  78]    0114: B0 76                                 	MOV AL, 01110110B
+[  79]    0116: E6 36                                 	OUT CRG, AL
+[  80]        :                                       
+[  81]    0118: B0 88                                 	MOV AL, 88H
+[  82]    011A: E6 30                                 	OUT CT0,AL
+[  83]    011C: B0 13                                 	MOV AL, 13H
+[  84]    011E: E6 30                                 	OUT CT0,AL
+[  85]        :                                       
+[  86]    0120: B0 60                                 	MOV AL, 60H
+[  87]    0122: E6 32                                 	OUT CT1, AL
+[  88]    0124: B0 EA                                 	MOV AL, 0EAH
+[  89]    0126: E6 32                                 	OUT CT1, AL
+[  90]        :                                       
+[  91]        :                                       	;PUT TIME IN MAIN TIMER
+[  92]    0128: B0 94                                 	MOV AL, 10010100B
+[  93]    012A: E6 36                                 	OUT CRG, AL
+[  94]    012C: B0 0F                                 	MOV AL, 15
+[  95]    012E: E6 34                                 	OUT CT2, AL
+[  96]        :                                       
+[  97]    0130: C6 06 03 01 0F                        	MOV TVAL,15
+[  98]    0135: C6 06 02 01 19                        	MOV UTMP,25
+[  99]        :                                       
+[ 100]    013A:                                       RPT1:
+[ 101]    013A: E4 14                                 	IN AL, PC1
+[ 102]    013C: F6 D0                                 	NOT AL
+[ 103]    013E: 24 03                                 	AND AL, 03H
+[ 104]    0140: D0 C8                                 	ROR AL, 1
+[ 105]    0142: 72 17                                 	JC TM1 ; JUMP TO TIMER MODE
+[ 106]    0144: D0 C8                                 	ROR AL, 1
+[ 107]    0146: 73 0E                                 	JNC X1                   ;******************************************
+[ 108]    0148: A0 02 01                              	MOV AL, UTMP
+[ 109]    014B: FE C0                                 	INC AL
+[ 110]    014D: 3C 23                                 	CMP AL, 35
+[ 111]    014F: 7E 02                                 	JLE X2
+[ 112]    0151: B0 10                                 	MOV AL, 16
+[ 113]    0153:                                       X2:
+[ 114]    0153: A2 02 01                              	MOV UTMP, AL
+[ 115]    0156:                                       X1:
+[ 116]        :                                       	; SHOW TEMP OUTPUT IN LCD
+[ 117]    0156: E8 28 01                              	CALL TEMP_WRITE
+[ 118]    0159: EB 24                                 	JMP E1
+[ 119]        :                                       
+[ 120]        :                                       ;TIMER MODE STARTS HERE
+[ 121]    015B:                                       TM1:
+[ 122]        :                                       	;ROR AL, 1                ;********************************************
+[ 123]        :                                       	;JC X3
+[ 124]    015B: A0 03 01                              	MOV AL, TVAL
+[ 125]    015E: B4 00                                 	MOV AH, 00
+[ 126]    0160: B3 0F                                 	MOV BL, 15
+[ 127]    0162: F6 F3                                 	DIV BL
+[ 128]    0164: B4 00                                 	MOV AH, 00
+[ 129]    0166: F6 E3                                 	MUL BL
+[ 130]    0168: 04 0F                                 	ADD AL, 15
+[ 131]    016A: 3C C3                                 	CMP AL, 195
+[ 132]    016C: 75 02                                 	JNZ X4
+[ 133]    016E: B0 0F                                 	MOV AL, 15
+[ 134]    0170:                                       X4:
+[ 135]    0170: A2 03 01                              	MOV TVAL, AL
+[ 136]        :                                       	;PUT TIME IN MAIN TIMER
+[ 137]    0173: B0 94                                 	MOV AL, 10010100B
+[ 138]    0175: E6 36                                 	OUT CRG, AL
+[ 139]    0177: A0 03 01                              	MOV AL, TVAL  ;MOVE THE MINUTES
+[ 140]    017A: E6 34                                 	OUT CT2, AL
+[ 141]    017C:                                       X3:
+[ 142]        :                                       	; SHOW TIMER VALUE IN LCD
+[ 143]    017C: E8 28 01                              	CALL TIME_WRITE
+[ 144]        :                                       
+[ 145]    017F:                                       E1: ;AFTER TIMER MODE
+[ 146]        :                                       
+[ 147]        :                                       	; CHECK FOR TEMPERATURES SENSORS
+[ 148]        :                                       	;IN FROM ROOM TEMP TO AL
+[ 149]    017F: B0 00                                 	MOV AL, 00
+[ 150]    0181: E8 8E 00                              	CALL GET_TEMP
+[ 151]        :                                       
+[ 152]    0184: 3A 06 02 01                           	CMP AL, UTMP
+[ 153]    0188: 7C 0A                                 	JL TOK1
+[ 154]    018A: A0 04 01                              	MOV AL, OPV
+[ 155]    018D: 0C 01                                 	OR AL, 01
+[ 156]    018F: A2 04 01                              	MOV OPV, AL
+[ 157]    0192: EB 08                                 	JMP TOK2
+[ 158]    0194:                                       TOK1:
+[ 159]    0194: A0 04 01                              	MOV AL, OPV
+[ 160]    0197: 24 FE                                 	AND AL, 0FEH
+[ 161]    0199: A2 04 01                              	MOV OPV,AL
+[ 162]    019C:                                       TOK2:
+[ 163]        :                                       
+[ 164]        :                                       	; TEMP SENSOR 2
+[ 165]    019C: B0 01                                 	MOV AL, 01
+[ 166]    019E: E8 71 00                              	CALL GET_TEMP
+[ 167]    01A1: 3A 06 02 01                           	CMP AL, UTMP
+[ 168]    01A5: 7C 0A                                 	JL TOK3
+[ 169]    01A7: A0 04 01                              	MOV AL, OPV
+[ 170]    01AA: 0C 02                                 	OR AL, 02
+[ 171]    01AC: A2 04 01                              	MOV OPV, AL
+[ 172]    01AF: EB 08                                 	JMP TOK4
+[ 173]    01B1:                                       TOK3:
+[ 174]    01B1: A0 04 01                              	MOV AL, OPV
+[ 175]    01B4: 24 FD                                 	AND AL, 0FDH
+[ 176]    01B6: A2 04 01                              	MOV OPV,AL
+[ 177]    01B9:                                       TOK4:
+[ 178]        :                                       	; TEMP SENSOR 3
+[ 179]    01B9: B0 02                                 	MOV AL, 02
+[ 180]    01BB: E8 54 00                              	CALL GET_TEMP
+[ 181]    01BE: 3A 06 02 01                           	CMP AL, UTMP
+[ 182]    01C2: 7C 0A                                 	JL TOK5
+[ 183]    01C4: A0 04 01                              	MOV AL, OPV
+[ 184]    01C7: 0C 04                                 	OR AL, 04
+[ 185]    01C9: A2 04 01                              	MOV OPV, AL
+[ 186]    01CC: EB 08                                 	JMP TOK6
+[ 187]    01CE:                                       TOK5:
+[ 188]    01CE: A0 04 01                              	MOV AL, OPV
+[ 189]    01D1: 24 FB                                 	AND AL, 0FBH
+[ 190]    01D3: A2 04 01                              	MOV OPV,AL
+[ 191]    01D6:                                       TOK6:
+[ 192]        :                                       	; TEMP SENSOR 4
+[ 193]    01D6: B0 03                                 	MOV AL, 03
+[ 194]    01D8: E8 37 00                              	CALL GET_TEMP
+[ 195]    01DB: 3A 06 02 01                           	CMP AL, UTMP
+[ 196]    01DF: 7C 0A                                 	JL TOK7
+[ 197]    01E1: A0 04 01                              	MOV AL, OPV
+[ 198]    01E4: 0C 08                                 	OR AL, 08
+[ 199]    01E6: A2 04 01                              	MOV OPV, AL
+[ 200]    01E9: EB 08                                 	JMP TOK8
+[ 201]    01EB:                                       TOK7:
+[ 202]    01EB: A0 04 01                              	MOV AL, OPV
+[ 203]    01EE: 24 F7                                 	AND AL, 0F7H
+[ 204]    01F0: A2 04 01                              	MOV OPV,AL;
+[ 205]    01F3:                                       TOK8:
+[ 206]    01F3: A0 04 01                              	MOV AL, OPV
+[ 207]    01F6: E6 22                                 	OUT PB2, AL
+[ 208]        :                                       
+[ 209]        :                                       ;CALL DELAYX
+[ 210]        :                                       	; GET TIMER VAL
+[ 211]        :                                       	;IF ZERO REPEAT
+[ 212]        :                                       					
+[ 213]        :                                       	;MOV AL,80H
+[ 214]        :                                       	;OUT CR2,AL
+[ 215]        :                                       	;IN AL, CT2
+[ 216]        :                                       	;CMP AL, 00
+[ 217]        :                                       	;JNZ RPT1
+[ 218]        :                                       
+[ 219]    01F8: E9 3F FF                              	JMP RPT1
+[ 220]        :                                       
+[ 221]    01FB: CC                                    	INT 3H
+[ 222]    01FC: B8 00 4C CD 21                        .EXIT
+[ 223]        :                                       
+[ 224]    0201:                                       DELAYX PROC
+[ 225]        :                                       	; START DELAY
+[ 226]    0201: BE AA AA                              	MOV SI, 43690
+[ 227]    0204: BD AA AA                              	MOV BP, 43690
+[ 228]    0207:                                       DELAY2:
+[ 229]    0207: 4D                                    	DEC BP
+[ 230]    0208: 90                                    	NOP
+[ 231]    0209: 75 FC                                 	JNZ DELAY2
+[ 232]    020B: 4E                                    	DEC SI
+[ 233]    020C: 83 FE 00                              	CMP SI,0
+[ 234]    020F: 75 F6                                 	JNZ DELAY2
+[ 235]        :                                       	; END DELAY
+[ 236]    0211: C3                                    	RET
+[ 237]        :                                       DELAYX ENDP
+[ 238]        :                                       
+[ 239]    0212:                                       GET_TEMP PROC
+[ 240]        :                                       
+[ 241]        :                                       		;ASSUMING AL HAS THE SENSOR TO BE SELECTED
+[ 242]    0212: E6 24                                 		  out		PC2, al
+[ 243]        :                                       
+[ 244]        :                                       ;give ale
+[ 245]    0214: 0C 20                                 OR       al,00100000b
+[ 246]    0216: E6 24                                 		  out       PC2,al
+[ 247]        :                                       		
+[ 248]        :                                       ;give soc
+[ 249]    0218: 0C 30                                 OR		al,00110000b
+[ 250]    021A: E6 24                                 		  out		PC2,al
+[ 251]        :                                       		
+[ 252]    021C: 90                                    		  nop
+[ 253]    021D: 90                                    		  nop
+[ 254]    021E: 90                                    		  nop
+[ 255]    021F: 90                                    		  nop
+[ 256]        :                                       ;make ALE 0
+[ 257]    0220: 24 DF                                 		  AND       al,11011111b
+[ 258]    0222: E6 24                                 		  out       PC2,al
+[ 259]        :                                       ;make SOC 0
+[ 260]        :                                       		
+[ 261]    0224: 24 CF                                 		  AND       al,11001111b
+[ 262]    0226: E6 24                                 		  out       PC2,al
+[ 263]        :                                       
+[ 264]    0228:                                       RE1:
+[ 265]    0228: E4 14                                 			IN AL, PC1
+[ 266]    022A: 24 04                                 			AND AL, 04H
+[ 267]    022C: 74 FA                                 			JZ       RE1
+[ 268]        :                                       
+[ 269]        :                                       
+[ 270]    022E: 0C 08                                 		OR		al,00001000b
+[ 271]    0230: E6 24                                 		out		PC2, al
+[ 272]    0232: E4 20                                 		in        al, PA2
+[ 273]        :                                       		
+[ 274]    0234: C3                                    RET
+[ 275]        :                                       GET_TEMP ENDP
+[ 276]        :                                       
+[ 277]        :                                       
+[ 278]        :                                       
+[ 279]    0235:                                       LCD_INIT PROC NEAR
+[ 280]    0235: B0 38                                 	MOV AL, 38H ;INITIALIZE LCD FOR 2 LINES & 5*7 MATRIX
+[ 281]    0237: E8 2C 00                              	CALL COMNDWRT ;WRITE THE COMMAND TO LCD
+[ 282]    023A: E8 39 00                              	CALL DELAY ;WAIT BEFORE ISSUING THE NEXT COMMAND
+[ 283]    023D: B0 0E                                 	MOV AL, 0EH ;SEND COMMAND FOR LCD ON, CURSOR ON	
+[ 284]    023F: E8 24 00                              	CALL COMNDWRT
+[ 285]    0242: E8 31 00                              	CALL DELAY
+[ 286]    0245: B0 01                                 	MOV AL, 01  ;CLEAR LCD
+[ 287]    0247: E8 1C 00                              	CALL COMNDWRT	
+[ 288]    024A: E8 29 00                              	CALL DELAY
+[ 289]    024D: B0 06                                 	MOV AL, 06  ;COMMAND FOR SHIFTING CURSOR RIGHT
+[ 290]    024F: E8 14 00                              	CALL COMNDWRT
+[ 291]    0252: E8 21 00                              	CALL DELAY
+[ 292]    0255: C3                                    	RET
+[ 293]        :                                       LCD_INIT ENDP
+[ 294]        :                                       
+[ 295]        :                                       
+[ 296]    0256:                                       DATWRIT PROC
+[ 297]    0256: 52                                    	PUSH DX  ;save DX
+[ 298]    0257: BA 10 00                              	MOV DX,PA1  ;DX=port A address
+[ 299]    025A: EE                                    	OUT DX, AL ;issue the char to LCD
+[ 300]    025B: B0 05                                 	MOV AL, 00000101B ;RS=1, R/W=0, E=1 for H-to-L pulse
+[ 301]    025D: BA 12 00                              	MOV DX, PB1 ;port B address
+[ 302]    0260: EE                                    	OUT DX, AL  ;make enable high
+[ 303]    0261: B0 01                                 	MOV AL, 00000001B ;RS=1,R/W=0 and E=0 for H-to-L pulse
+[ 304]    0263: EE                                    	OUT DX, AL
+[ 305]    0264: 5A                                    	POP DX
+[ 306]    0265: C3                                    	RET
+[ 307]        :                                       DATWRIT ENDP ;writing on the lcd ends
+[ 308]        :                                       
+[ 309]    0266:                                       COMNDWRT PROC ;THIS PROCEDURE WRITES COMMANDS TO LCD
+[ 310]    0266: BA 10 00                              	MOV DX, PA1
+[ 311]    0269: EE                                    	OUT DX, AL  ;SEND THE CODE TO PORT A
+[ 312]    026A: BA 12 00                              	MOV DX, PB1 	
+[ 313]    026D: B0 04                                 	MOV AL, 00000100B ;RS=0,R/W=0,E=1 FOR H-TO-L PULSE
+[ 314]    026F: EE                                    	OUT DX, AL
+[ 315]    0270: 90                                    	NOP
+[ 316]    0271: 90                                    	NOP
+[ 317]    0272: B0 00                                 	MOV AL, 00000000B ;RS=0,R/W=0,E=0 FOR H-TO-L PULSE
+[ 318]    0274: EE                                    	OUT DX, AL
+[ 319]    0275: C3                                    	RET
+[ 320]        :                                       COMNDWRT ENDP
+[ 321]        :                                       
+[ 322]        :                                       ;DELAY IN THE CIRCUIT HERE THE DELAY OF 20 MILLISECOND IS PRODUCED
+[ 323]    0276:                                       DELAY PROC
+[ 324]    0276: B9 2D 05                              	MOV CX, 1325 ;1325*15.085 USEC = 20 MSEC
+[ 325]    0279:                                       	W1:
+[ 326]    0279: 90                                    		NOP
+[ 327]    027A: 90                                    		NOP
+[ 328]    027B: 90                                    		NOP
+[ 329]    027C: 90                                    		NOP
+[ 330]    027D: 90                                    		NOP
+[ 331]    027E: E2 F9                                 	LOOP W1
+[ 332]    0280: C3                                    	RET
+[ 333]        :                                       DELAY ENDP
+[ 334]        :                                       
+[ 335]    0281:                                       TEMP_WRITE PROC NEAR
+[ 336]    0281: 50                                    	PUSH AX
+[ 337]    0282: 53                                    	PUSH BX
+[ 338]    0283: E8 59 00                              	CALL CLS
+[ 339]    0286: E8 ED FF                              	CALL DELAY ;WAIT BEFORE ISSUING THE NEXT CHARACTER
+[ 340]        :                                       
+[ 341]    0289: B3 0A                                 	MOV BL, 10
+[ 342]    028B: A0 02 01                              	MOV AL, UTMP
+[ 343]    028E: B4 00                                 	MOV AH,00
+[ 344]    0290: F6 F3                                 	DIV BL
+[ 345]        :                                       
+[ 346]    0292: 04 30                                 	ADD AL, '0' ;DISPLAY TENS OF TEMP
+[ 347]    0294: E8 BF FF                              	CALL DATWRIT ;ISSUE IT TO LCD
+[ 348]    0297: E8 DC FF                              	CALL DELAY ;WAIT BEFORE ISSUING THE NEXT CHARACTER
+[ 349]        :                                       
+[ 350]    029A: 8A C4                                 	MOV AL, AH
+[ 351]    029C: 04 30                                 	ADD AL, '0' ;DISPLAY ONES OF TEMP
+[ 352]    029E: E8 B5 FF                              	CALL DATWRIT ;ISSUE IT TO LCD
+[ 353]    02A1: E8 D2 FF                              	CALL DELAY ;WAIT BEFORE ISSUING THE NEXT CHARACTER
+[ 354]        :                                       
+[ 355]    02A4: 5B                                    	POP BX
+[ 356]    02A5: 58                                    	POP AX
+[ 357]    02A6: C3                                    	RET
+[ 358]        :                                       TEMP_WRITE ENDP
+[ 359]        :                                       
+[ 360]    02A7:                                       TIME_WRITE PROC NEAR
+[ 361]    02A7: 50                                    	PUSH AX
+[ 362]    02A8: 53                                    	PUSH BX
+[ 363]    02A9: E8 33 00                              	CALL CLS
+[ 364]    02AC: E8 C7 FF                              	CALL DELAY ;WAIT BEFORE ISSUING THE NEXT CHARACTER
+[ 365]        :                                       	
+[ 366]    02AF: B3 0A                                 	MOV BL, 10
+[ 367]    02B1: A0 03 01                              	MOV AL, TVAL
+[ 368]        :                                       
+[ 369]    02B4: B4 00                                 	MOV AH,00
+[ 370]    02B6: 03 C0                                 	ADD AX, AX
+[ 371]    02B8: F6 F3                                 	DIV BL
+[ 372]        :                                       
+[ 373]    02BA: 8A FC                                 	MOV BH, AH
+[ 374]    02BC: B4 00                                 	MOV AH,00
+[ 375]    02BE: F6 F3                                 	DIV BL
+[ 376]        :                                       
+[ 377]    02C0: 04 30                                 	ADD AL, '0' ;DISPLAY HUNDREDS OF TEMP
+[ 378]    02C2: E8 91 FF                              	CALL DATWRIT ;ISSUE IT TO LCD
+[ 379]    02C5: E8 AE FF                              	CALL DELAY ;WAIT BEFORE ISSUING THE NEXT CHARACTER
+[ 380]        :                                       
+[ 381]    02C8: 8A C4                                 	MOV AL, AH
+[ 382]    02CA: 04 30                                 	ADD AL, '0' ;DISPLAY TENS OF TEMP
+[ 383]    02CC: E8 87 FF                              	CALL DATWRIT ;ISSUE IT TO LCD
+[ 384]    02CF: E8 A4 FF                              	CALL DELAY ;WAIT BEFORE ISSUING THE NEXT CHARACTER
+[ 385]        :                                       
+[ 386]    02D2: 8A C7                                 	MOV AL, BH
+[ 387]    02D4: 04 30                                 	ADD AL, '0' ;DISPLAY ONES OF TEMP
+[ 388]    02D6: E8 7D FF                              	CALL DATWRIT ;ISSUE IT TO LCD
+[ 389]    02D9: E8 9A FF                              	CALL DELAY ;WAIT BEFORE ISSUING THE NEXT CHARACTER
+[ 390]        :                                       
+[ 391]    02DC: 5B                                    	POP BX
+[ 392]    02DD: 58                                    	POP AX
+[ 393]    02DE: C3                                    	RET
+[ 394]        :                                       TIME_WRITE ENDP
+[ 395]        :                                       
+[ 396]    02DF:                                       CLS PROC
+[ 397]    02DF: B0 01                                 	MOV AL, 01  ;CLEAR LCD
+[ 398]    02E1: E8 82 FF                              	CALL COMNDWRT
+[ 399]    02E4: E8 8F FF                              	CALL DELAY
+[ 400]    02E7: C3                                    	RET
+[ 401]        :                                       CLS ENDP
+[ 402]        :                                       
+[ 403]        :                                       END
+[ 404]        :                                       
+[ 405]        :                                       
+[ 406]        :                                       HLT           ; halt!
+[ 407]        :                                       
+[ 408]        :                                       
+[ 409]        :                                       
+[ 410]        :                                       
+ 
+===================================================================================================
+ 
+
+
+
+
+===================================================================================================

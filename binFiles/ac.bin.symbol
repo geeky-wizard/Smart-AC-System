@@ -1,0 +1,40 @@
+< THE SYMBOL TABLE >  ac.bin  --  emu8086 assembler version: 4.08 
+===================================================================================================
+Name                     	Offset    	Size      	Type      	Segment   
+===================================================================================================
+UTMP                     	00102     	1         	VAR       	(NOSEG)   
+TVAL                     	00103     	1         	VAR       	(NOSEG)   
+OPV                      	00104     	1         	VAR       	(NOSEG)   
+CODE                     	00105     	-1        	LABEL     	(NOSEG)   
+STARTUP                  	00105     	-1        	LABEL     	(NOSEG)   
+RPT1                     	0013A     	-1        	LABEL     	(NOSEG)   
+X2                       	00153     	-1        	LABEL     	(NOSEG)   
+X1                       	00156     	-1        	LABEL     	(NOSEG)   
+TM1                      	0015B     	-1        	LABEL     	(NOSEG)   
+X4                       	00170     	-1        	LABEL     	(NOSEG)   
+X3                       	0017C     	-1        	LABEL     	(NOSEG)   
+E1                       	0017F     	-1        	LABEL     	(NOSEG)   
+TOK1                     	00194     	-1        	LABEL     	(NOSEG)   
+TOK2                     	0019C     	-1        	LABEL     	(NOSEG)   
+TOK3                     	001B1     	-1        	LABEL     	(NOSEG)   
+TOK4                     	001B9     	-1        	LABEL     	(NOSEG)   
+TOK5                     	001CE     	-1        	LABEL     	(NOSEG)   
+TOK6                     	001D6     	-1        	LABEL     	(NOSEG)   
+TOK7                     	001EB     	-1        	LABEL     	(NOSEG)   
+TOK8                     	001F3     	-1        	LABEL     	(NOSEG)   
+DELAYX                   	00201     	-1        	NEAR      	(NOSEG)   
+DELAY2                   	00207     	-1        	LABEL     	(NOSEG)   
+GET_TEMP                 	00212     	-1        	NEAR      	(NOSEG)   
+RE1                      	00228     	-1        	LABEL     	(NOSEG)   
+LCD_INIT                 	00235     	-1        	NEAR      	(NOSEG)   
+DATWRIT                  	00256     	-1        	NEAR      	(NOSEG)   
+COMNDWRT                 	00266     	-1        	NEAR      	(NOSEG)   
+DELAY                    	00276     	-1        	NEAR      	(NOSEG)   
+W1                       	00279     	-1        	LABEL     	(NOSEG)   
+TEMP_WRITE               	00281     	-1        	NEAR      	(NOSEG)   
+TIME_WRITE               	002A7     	-1        	NEAR      	(NOSEG)   
+CLS                      	002DF     	-1        	NEAR      	(NOSEG)   
+===================================================================================================
+[ 4/25/2019  --  3:28:37 AM ] 
+< END >
+ 
