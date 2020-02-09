@@ -11,8 +11,8 @@ points of the room. Each sensor and AC vent is associated with part of
 the room. You can assume that the room is broken up into 4 sub-areas
 each with its own sensor and ac vent.
 
-User Interface: LCD displaying Temperature in 0oC. Single push button
-to vary temperature between 16-35 degree celsius.
+User Interface: LCD displaying Temperature in 0°C. Single push button
+to vary temperature between 16°C to 35°C.
 
 The duration for which the system is ON can be set by the user in
 minutes ranging from 30 min. to 6 hours with a granularity of 30 min.
