@@ -4,7 +4,7 @@ Smart AC System is designed and simulated on Proteus.
 
 This system opens/closes four AC vents based upon the current
 temperature in the Room. The temperature is maintained at a range of
-16–35 oC. The AC vents can be gradually opened / closed. This is
+16–35°C. The AC vents can be gradually opened / closed. This is
 done in accordance with the temperature in the room. The room is a
 fairly large sized room so 4 temperature sensors are placed at different
 points of the room. Each sensor and AC vent is associated with part of
